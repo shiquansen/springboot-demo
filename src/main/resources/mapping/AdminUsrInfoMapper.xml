@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sbzl.cn.blog.mapper.AdminUsrInfoMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="org.sbzl.cn.blog.entity.base.AdminUsrInfo">
+        <id column="id" property="id" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="deleted_at" property="deletedAt" />
+        <result column="usr_id" property="usrId" />
+        <result column="nickname" property="nickname" />
+        <result column="motto" property="motto" />
+        <result column="address" property="address" />
+        <result column="personal_info" property="personalInfo" />
+        <result column="personal_introduction" property="personalIntroduction" />
+    </resultMap>
+
+    <resultMap id="UserResultMap" type="org.sbzl.cn.blog.entity.business.adminUsrInfo.AdminUser">
+        <id column="id" property="id" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="deleted_at" property="deletedAt" />
+        <result column="usr_id" property="usrId" />
+        <result column="nickname" property="nickname" />
+        <result column="motto" property="motto" />
+        <result column="address" property="address" />
+        <result column="personal_info" property="personalInfo" />
+        <result column="personal_introduction" property="personalIntroduction" />
+        <association column="usr_id" property="user"  select="org.sbzl.cn.blog.mapper.UserMapper.selectByRole"/>
+    </resultMap>
+
+
+    <select id="getByAdmin" resultMap="UserResultMap">
+        select
+                admin.*, u.*
+        from
+            admin_usr_info admin
+        join `user` u on admin.usr_id = u.id
+        where u.role = #{role}
+    </select>
+</mapper>

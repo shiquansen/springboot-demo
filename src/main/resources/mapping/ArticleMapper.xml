@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.sbzl.cn.blog.mapper.ArticleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="org.sbzl.cn.blog.entity.base.Article">
+        <id column="id" property="id" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="deleted_at" property="deletedAt" />
+        <result column="title" property="title" />
+        <result column="cid" property="cid" />
+        <result column="desc" property="desc" />
+        <result column="content" property="content" />
+        <result column="page_view" property="pageView" />
+    </resultMap>
+
+    <resultMap id="CategoryResultMap" type="org.sbzl.cn.blog.entity.business.article.ArticleCategory">
+        <id column="id" property="id" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="deleted_at" property="deletedAt" />
+        <result column="title" property="title" />
+        <result column="cid" property="cid" />
+        <result column="desc" property="desc" />
+        <result column="content" property="content" />
+        <result column="page_view" property="pageView" />
+        <association column="cid" property="category" select="org.sbzl.cn.blog.mapper.CategoryMapper.selectById"/>
+    </resultMap>
+
+    <resultMap id="CategoryAdminResultMap" type="org.sbzl.cn.blog.entity.business.article.ArticleCategoryAdmin">
+        <id column="id" property="id" />
+        <result column="created_at" property="createdAt" />
+        <result column="updated_at" property="updatedAt" />
+        <result column="deleted_at" property="deletedAt" />
+        <result column="title" property="title" />
+        <result column="cid" property="cid" />
+        <result column="desc" property="desc" />
+        <result column="content" property="content" />
+        <result column="page_view" property="pageView" />
+        <result column="create_id" property="createId" />
+        <association column="cid" property="category" select="org.sbzl.cn.blog.mapper.CategoryMapper.selectById"/>
+        <association column="create_id" property="adminUsrInfo" select="org.sbzl.cn.blog.mapper.AdminUsrInfoMapper.selectById"/>
+    </resultMap>
+
+    <select id="selectWithCategoryById" resultMap="CategoryResultMap" parameterType="org.sbzl.cn.blog.entity.base.Article">
+        select
+            article.*, category.*
+        from article article
+        join category category on article.cid = category.id
+        <where>
+            <if test="article.title != null">
+                title like concat('%',#{article.title}, '%')
+            </if>
+            <if test="article.cid != null">
+                and article.cid = #{article.cid}
+            </if>
+        </where>
+    </select>
+
+    <select id="selectCategoryById" resultMap="CategoryResultMap" parameterType="long">
+        select
+        article.*, category.*
+        from article article
+        join category category on article.cid = category.id
+        <where>
+            article.id = #{id}
+        </where>
+    </select>
+
+    <select id="getArticleListRecent" resultMap="CategoryAdminResultMap">
+        select
+            article.*, category.*, admin.*
+        from article article
+            join category category on article.cid = category.id
+            join admin_usr_info admin on admin.id = article.create_id
+        order by article.created_at desc
+    </select>
+
+
+</mapper>
